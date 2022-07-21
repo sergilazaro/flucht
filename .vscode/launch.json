@@ -1,0 +1,12 @@
+{
+	"configurations": [
+		{
+			"name": "Python: Debug",
+			"type": "python",
+			"request": "launch",
+			"program": "Flucht/game_pygame.py",
+			"console": "integratedTerminal",
+			"justMyCode": true
+		}
+	]
+}
