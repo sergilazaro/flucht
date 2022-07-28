@@ -5,6 +5,7 @@ import asyncio
 import time
 import copy
 import os
+import sys
 
 import common_code
 
@@ -122,21 +123,31 @@ class game_interface:
 			self.sprites[name] = Sprite(width, height, data, x, y, key)
 
 	def save_data(self, data_dict):
-		with open(CONFIG_FILE_PATH, 'w') as file:
+		if sys.platform == "emscripten":
 			for key in data_dict:
-				file.write(str(key) + ':' + str(data_dict[key]))
+				__import__('platform').window.localStorage.setItem("Flucht_" + key, str(data_dict[key]))
+		else:
+			with open(CONFIG_FILE_PATH, 'w') as file:
+				for key in data_dict:
+					file.write(str(key) + ':' + str(data_dict[key]))
 		
 	def load_data(self):
 		data_dict = {}
 		
-		if os.path.exists(CONFIG_FILE_PATH):
-			with open(CONFIG_FILE_PATH, 'r') as file:
-				for line in file:
-					tokens = line.split(':')
-					if len(tokens) >= 2:
-						key = tokens[0]
-						value = ':'.join(tokens[1:])
-						data_dict[key] = value
+		if sys.platform == "emscripten":
+			# hack: i have no way to enumerate, so let's just hardcode it, even though it's not clean or extensible
+			d = __import__('platform').window.localStorage.getItem("Flucht_highscore")
+			if d is not None:
+				data_dict['highscore'] = d
+		else:
+			if os.path.exists(CONFIG_FILE_PATH):
+				with open(CONFIG_FILE_PATH, 'r') as file:
+					for line in file:
+						tokens = line.split(':')
+						if len(tokens) >= 2:
+							key = tokens[0]
+							value = ':'.join(tokens[1:])
+							data_dict[key] = value
 			
 		return data_dict
 
