@@ -150,6 +150,9 @@ class game_interface:
 							data_dict[key] = value
 			
 		return data_dict
+	
+	def draw_battery(self):
+		pass
 
 _game_interface = game_interface()
 
